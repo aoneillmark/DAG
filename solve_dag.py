@@ -15,24 +15,26 @@ class Node:
 
 
 
-def C(l_nodes: DAG, l_schedule: np.ndarray) -> int:
-    return sum([node.p for node in l_nodes.vertices() if node not in l_schedule])
+def C(l: list, l_schedule: np.ndarray) -> int:
+    return sum([node.p for node in l if node not in l_schedule])
 
 
-def g(l_nodes: DAG, j: int) -> int:
-    return max(0, C(l_nodes) - l_nodes[j].d)
-
-def g(l_nodes: DAG, node: Node) -> int:
-    return max(0, C(l_nodes) - node.d)
+def g(l: list, l_schedule: np.ndarray, j: int) -> int:
+    return max(0, C(l, l_schedule) - l[j].d)
 
 
-def pick_next(l_nodes: DAG, l_schedule: np.ndarray):
-    min_index: int = min([g(l_nodes, j) 
-                          for j in range(len(l_nodes.vertices())) 
-                          if l_nodes[j] not in l_schedule 
-                          and l_nodes.successors(l_nodes[j]) in l_schedule ])
+def pick_next(l_nodes: DAG, l_schedule: np.ndarray, current_index):
+    set_copy = []
+    for node in l_nodes.vertices():
+        set_copy.append( node )
     
-    l_schedule.insert(0, l_nodes.vertices()[min_index])
+    min_index: int = 0
+    
+    for i in range(len(set_copy)):
+        if (set_copy[i] not in l_schedule) and l_nodes.successors(set_copy[i]) and (g(set_copy, l_schedule, i) < g(set_copy, l_schedule, min_index)):
+            min_index = i
+    
+    l_schedule[current_index] = set_copy[min_index]
 
 
 
@@ -49,9 +51,9 @@ def main():
     nodes.add_edge(J3, J4)
     nodes.add_edge(J2, J4)
     
-    schedule = np.empty(len(nodes.vertices()))
+    schedule = np.empty(len(nodes.vertices()), Node)
     
-    while len(schedule) < len(nodes.vertices()):
-        pick_next(nodes, schedule)
+    for i in range(len(nodes.vertices())-1, 0, -1):
+        pick_next(nodes, schedule, i)
         
     print([ node.name for node in schedule ])
