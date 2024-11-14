@@ -28,11 +28,12 @@ def g(l_nodes: DAG, node: Node) -> int:
 
 def pick_next(l_nodes: DAG, l_schedule: np.ndarray):
     min_index: int = min([g(l_nodes, j) 
-                          for j in range(l_nodes.vertices().len()) 
+                          for j in range(len(l_nodes.vertices())) 
                           if l_nodes[j] not in l_schedule 
                           and l_nodes.successors(l_nodes[j]) in l_schedule ])
     
     l_schedule.insert(0, l_nodes.vertices()[min_index])
+
 
 
 
@@ -48,9 +49,9 @@ def main():
     nodes.add_edge(J3, J4)
     nodes.add_edge(J2, J4)
     
-    schedule = np.empty(nodes.vertices().len())
+    schedule = np.empty(len(nodes.vertices()))
     
-    while schedule.len() < nodes.vertices().len():
+    while len(schedule) < len(nodes.vertices()):
         pick_next(nodes, schedule)
         
-    print(schedule)
+    print([ node.name for node in schedule ])
