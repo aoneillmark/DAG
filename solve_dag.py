@@ -29,11 +29,15 @@ def pick_next(l_nodes: DAG, l_schedule: np.ndarray, current_index):
         set_copy.append( node )
     
     min_index: int = 0
-    
+    min_g: int = 1000000000
+
     for i in range(len(set_copy)):
-        if (set_copy[i] not in l_schedule) and l_nodes.successors(set_copy[i]) and (g(set_copy, l_schedule, i) < g(set_copy, l_schedule, min_index)):
+        if (set_copy[i] not in l_schedule) \
+                and (l_nodes.successors(set_copy[i]) in l_schedule or l_nodes.successors(set_copy[i]) == []) \
+                and (g(set_copy, l_schedule, i) < min_g):
             min_index = i
-    
+            min_g = g(set_copy, l_schedule, i)
+
     l_schedule[current_index] = set_copy[min_index]
 
 
@@ -53,7 +57,8 @@ def main():
     
     schedule = np.empty(len(nodes.vertices()), Node)
     
-    for i in range(len(nodes.vertices())-1, 0, -1):
+    for i in range(len(nodes.vertices())-1, -1, -1):
         pick_next(nodes, schedule, i)
-        
-    print([ node.name for node in schedule ])
+    
+    for node in schedule:
+        print(node.name)
