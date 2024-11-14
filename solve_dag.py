@@ -8,7 +8,7 @@ class Node:
     p: int
     d: int
 
-    def __init__(self, name: str, p: int, d: int, predecessors: np.ndarray = [], successors: np.ndarray = []):
+    def __init__(self, name: str, p: int, d: int):
         self.name = name
         self.p = p
         self.d = d
@@ -26,7 +26,7 @@ def g(l_nodes: DAG, node: Node) -> int:
     return max(0, C(l_nodes) - node.d)
 
 
-def pick_next(l_nodes: DAG, l_schedule: np.ndarray[Node]) -> Node:
+def pick_next(l_nodes: DAG, l_schedule: np.ndarray):
     min_index: int = min([g(l_nodes, j) 
                           for j in range(l_nodes.vertices().len()) 
                           if l_nodes[j] not in l_schedule 
@@ -37,5 +37,20 @@ def pick_next(l_nodes: DAG, l_schedule: np.ndarray[Node]) -> Node:
 
 
 def main():
+    J1 = Node("J1", 3, 2)
+    J2 = Node("J2", 4, 1)
+    J3 = Node("J3", 2, 3)
+    J4 = Node("J4", 1, 4)
+    
     nodes = DAG()
-    schedule = np.empty()
+    nodes.add_vertex(J1, J2, J3, J4)
+    nodes.add_edge(J1, J3)
+    nodes.add_edge(J3, J4)
+    nodes.add_edge(J2, J4)
+    
+    schedule = np.empty(nodes.vertices().len())
+    
+    while schedule.len() < nodes.vertices().len():
+        pick_next(nodes, schedule)
+        
+    print(schedule)
