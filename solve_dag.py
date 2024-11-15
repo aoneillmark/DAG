@@ -15,11 +15,11 @@ class Node:
 
 
 
-def C(l: list, l_schedule: np.ndarray) -> int:
+def C(l: list, l_schedule: list) -> int:
     return sum([node.p for node in l if node not in l_schedule])
 
 
-def g(l: list, l_schedule: np.ndarray, j: int) -> int:
+def g(l: list, l_schedule: list, j: int) -> int:
     return max(0, C(l, l_schedule) - l[j].d)
 
 
