@@ -40,24 +40,28 @@ def pick_next(l_nodes: DAG, l_schedule: list):
     for i in range(len(set_copy)):
         # Check if the node is not already scheduled
         if (set_copy[i].name not in [node.name for node in l_schedule]):
-            # Check if the node has no successors (i.e., it is ready to be scheduled)
-            if l_nodes.successors(set_copy[i]) == set():
+            # Check if the node has no successors (i.e., it is ready to be scheduled) OR all successors already in the schedule
+            if l_nodes.successors(set_copy[i]) == set() or all(
+                # all() checks if all items in an iterative are true
+                # This is checking if all successors are already in the schedule
+                succ in l_schedule for succ in l_nodes.successors(set_copy[i])
+            ):
                 # Update the minimum index and tardiness if a lower tardiness is found
                 if (g(set_copy, l_schedule, i) < min_g):
                     min_index = i
                     min_g = g(set_copy, l_schedule, i)
             
-            # Check if all successors of the node are already in the schedule
-            all_successors_in_schedule = True
-            for node in l_nodes.successors(set_copy[i]):
-                if node not in l_schedule:
-                    all_successors_in_schedule = False
+            # # Check if all successors of the node are already in the schedule
+            # all_successors_in_schedule = True
+            # for node in l_nodes.successors(set_copy[i]):
+            #     if node not in l_schedule:
+            #         all_successors_in_schedule = False
             
-            # Update the minimum index and tardiness if conditions are met
-            if all_successors_in_schedule:
-                if (g(set_copy, l_schedule, i) < min_g):
-                    min_index = i
-                    min_g = g(set_copy, l_schedule, i)
+            # # Update the minimum index and tardiness if conditions are met
+            # if all_successors_in_schedule:
+            #     if (g(set_copy, l_schedule, i) < min_g):
+            #         min_index = i
+            #         min_g = g(set_copy, l_schedule, i)
     
     # Insert the selected node at the start of the schedule
     l_schedule.insert(0, set_copy[min_index])
@@ -65,10 +69,10 @@ def pick_next(l_nodes: DAG, l_schedule: list):
 # Main function to set up nodes, construct the DAG, and generate the schedule
 def main():
     # Create nodes with their respective processing times and deadlines
-    J1 = Node("J1", 3, 2)
-    J2 = Node("J2", 4, 1)
-    J3 = Node("J3", 2, 3)
-    J4 = Node("J4", 1, 4)
+    J1 = Node(name="J1", p=3, d=2)
+    J2 = Node(name="J2", p=4, d=1)
+    J3 = Node(name="J3", p=2, d=3)
+    J4 = Node(name="J4", p=1, d=4)
 
     # Initialise a Directed Acyclic Graph (DAG) and add vertices
     nodes = DAG()
@@ -91,4 +95,5 @@ def main():
         print(node.name)
 
 # Execute the main function when the script is run
-main()
+if __name__ == "__main__":
+    main()
