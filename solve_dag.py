@@ -41,27 +41,27 @@ def pick_next(l_nodes: DAG, l_schedule: list):
         # Check if the node is not already scheduled
         if (set_copy[i].name not in [node.name for node in l_schedule]):
             # Check if the node has no successors (i.e., it is ready to be scheduled) OR all successors already in the schedule
-            if l_nodes.successors(set_copy[i]) == set() or all(
-                # all() checks if all items in an iterative are true
-                # This is checking if all successors are already in the schedule
-                succ in l_schedule for succ in l_nodes.successors(set_copy[i])
-            ):
+            if l_nodes.successors(set_copy[i]) == set(): # or all(
+            #     # all() checks if all items in an iterative are true
+            #     # This is checking if all successors are already in the schedule
+            #     succ in l_schedule for succ in l_nodes.successors(set_copy[i])
+            # ):
                 # Update the minimum index and tardiness if a lower tardiness is found
                 if (g(set_copy, l_schedule, i) < min_g):
                     min_index = i
                     min_g = g(set_copy, l_schedule, i)
             
-            # # Check if all successors of the node are already in the schedule
-            # all_successors_in_schedule = True
-            # for node in l_nodes.successors(set_copy[i]):
-            #     if node not in l_schedule:
-            #         all_successors_in_schedule = False
+            # Check if all successors of the node are already in the schedule
+            all_successors_in_schedule = True
+            for node in l_nodes.successors(set_copy[i]):
+                if node not in l_schedule:
+                    all_successors_in_schedule = False
             
-            # # Update the minimum index and tardiness if conditions are met
-            # if all_successors_in_schedule:
-            #     if (g(set_copy, l_schedule, i) < min_g):
-            #         min_index = i
-            #         min_g = g(set_copy, l_schedule, i)
+            # Update the minimum index and tardiness if conditions are met
+            if all_successors_in_schedule:
+                if (g(set_copy, l_schedule, i) < min_g):
+                    min_index = i
+                    min_g = g(set_copy, l_schedule, i)
     
     # Insert the selected node at the start of the schedule
     l_schedule.insert(0, set_copy[min_index])
