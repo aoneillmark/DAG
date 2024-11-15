@@ -56,3 +56,6 @@ def main():
     # Print the names of the nodes in the scheduled order
     for node in schedule:
         print(node.name)
+
+if __name__ == "__main__":
+    main()
